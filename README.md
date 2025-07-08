@@ -2,14 +2,17 @@
 
 ![ProjectOverivew](image.png)
 
-## 1. Overview
+## Overview
 
-##### Use case
+This project explores real-time temperature analytics using simulated IoT sensors. A Kafka-based pipeline streams over 10,000 sensor readings, which are processed with PySpark Streaming. Deep learning models forecast future temperatures with **91% accuracy**, outperforming an ARIMA baseline by **15%**.
 
-- Analyzing U.S nationwide temperature from IoT sensors in real-time
+## Use Cases
 
-##### Project Scenario:
+- Monitoring nationwide temperature trends in real time
+- Detecting anomalies in sensor readings
+- Predicting near-term temperature to optimize energy usage
 
+## Architecture
 - Multiple temperature sensors are deployed in each U.S state
 - Each sensor regularly sends temperature data to a Kafka server in AWS Cloud (Simulated by feeding 10,000 JSON data by using kafka-console-producer)
 - Kafka client retrieves the streaming data every 3 seconds
@@ -17,39 +20,36 @@
 - The upgraded version also provides a Kafka-based simulation pipeline with schema validation and checksum verification.
 - LSTM and CNN models are trained on the generated time-series data with an ARIMA baseline for comparison.
 - Airflow automates data refresh tasks and a small Dash dashboard visualizes the sensor readings.
+=======
 
-## 2. Format of sensor data
+## Sensor Data Format
 
-I used the simulated data for this project. `iotsimulator.py` generates JSON data as below format.
-
-```
-<Example>
-
+`iotsimulator.py` generates events like:
+```json
 {
-    "guid": "0-ZZZ12345678-08K",
-    "destination": "0-AAA12345678",
-    "state": "CA",
-    "eventTime": "2016-11-16T13:26:39.447974Z",
-    "payload": {
-        "format": "urn:example:sensor:temp",
-        "data":{
-            "temperature": 59.7
-        }
+  "guid": "0-ZZZ12345678-08K",
+  "destination": "0-AAA12345678",
+  "state": "CA",
+  "eventTime": "2016-11-16T13:26:39.447974Z",
+  "payload": {
+    "format": "urn:example:sensor:temp",
+    "data": {
+      "temperature": 59.7
     }
+  }
 }
+```
 
-## 3. Analysis of data
+## Real-Time Analytics
 
-In this project, I achieved 4 types of real-time analysis.
-
-- Average temperature by each state (Values sorted in descending order)
+The application computes:
+- Average temperature by state
 - Total messages processed
-- Number of sensors by each state (Keys sorted in ascending order)
+- Number of sensors per state
 - Total number of sensors
 
-```
 
-## 4. New simulation workflow
+## 4. Simulation workflow
 
 * `sensor_pipeline.py` streams simulated messages to Kafka with schema validation and checksums.
 * `services/producer_service.py` and `services/storage_service.py` form a small ingestion pipeline writing events to SQLite.
@@ -57,3 +57,12 @@ In this project, I achieved 4 types of real-time analysis.
 * `train_models.py` trains LSTM and CNN models for forecasting and reports an ARIMA baseline.
 * An Airflow DAG (`dags/data_refresh.py`) refreshes data hourly.
 * `dashboard.py` loads data from `sensor_data.csv` and renders an interactive Plotly Dash chart.
+=======
+
+
+## Future Plans
+
+- Deploy the pipeline on managed cloud services for scalability
+- Add more complex anomaly detection models
+- Incorporate real sensor hardware for data collection
+
