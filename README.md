@@ -14,6 +14,9 @@
 - Each sensor regularly sends temperature data to a Kafka server in AWS Cloud (Simulated by feeding 10,000 JSON data by using kafka-console-producer)
 - Kafka client retrieves the streaming data every 3 seconds
 - PySpark processes and analizes them in real-time by using Spark Streming, and show the results
+- The upgraded version also provides a Kafka-based simulation pipeline with schema validation and checksum verification.
+- LSTM and CNN models are trained on the generated time-series data with an ARIMA baseline for comparison.
+- Airflow automates data refresh tasks and a small Dash dashboard visualizes the sensor readings.
 
 ## 2. Format of sensor data
 
@@ -45,3 +48,12 @@ In this project, I achieved 4 types of real-time analysis.
 - Total number of sensors
 
 ```
+
+## 4. New simulation workflow
+
+* `sensor_pipeline.py` streams simulated messages to Kafka with schema validation and checksums.
+* `services/producer_service.py` and `services/storage_service.py` form a small ingestion pipeline writing events to SQLite.
+* `services/analytics_service.py` exposes helper functions to compute hourly averages and per-state counts.
+* `train_models.py` trains LSTM and CNN models for forecasting and reports an ARIMA baseline.
+* An Airflow DAG (`dags/data_refresh.py`) refreshes data hourly.
+* `dashboard.py` loads data from `sensor_data.csv` and renders an interactive Plotly Dash chart.
