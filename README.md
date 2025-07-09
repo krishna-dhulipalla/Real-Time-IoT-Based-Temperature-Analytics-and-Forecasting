@@ -21,7 +21,6 @@ This project explores real-time temperature analytics using simulated IoT sensor
 - The upgraded version also provides a Kafka-based simulation pipeline with schema validation and checksum verification.
 - LSTM and CNN models are trained on the generated time-series data with an ARIMA baseline for comparison.
 - Airflow automates data refresh tasks and a small Dash dashboard visualizes the sensor readings.
-=======
 
 ## Sensor Data Format
 
