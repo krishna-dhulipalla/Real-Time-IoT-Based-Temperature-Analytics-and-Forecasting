@@ -13,6 +13,7 @@ This project explores real-time temperature analytics using simulated IoT sensor
 - Predicting near-term temperature to optimize energy usage
 
 ## Architecture
+
 - Multiple temperature sensors are deployed in each U.S state
 - Each sensor regularly sends temperature data to a Kafka server in AWS Cloud (Simulated by feeding 10,000 JSON data by using kafka-console-producer)
 - Kafka client retrieves the streaming data every 3 seconds
@@ -57,7 +58,6 @@ The application computes:
 * `train_models.py` trains LSTM and CNN models for forecasting and reports an ARIMA baseline.
 * An Airflow DAG (`dags/data_refresh.py`) refreshes data hourly.
 * `dashboard.py` loads data from `sensor_data.csv` and renders an interactive Plotly Dash chart.
-=======
 
 
 ## Future Plans
