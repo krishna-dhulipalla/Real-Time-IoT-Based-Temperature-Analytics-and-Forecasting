@@ -14,21 +14,30 @@ This project explores real-time temperature analytics using simulated IoT sensor
 
 ## Architecture
 
-1. Sensors (simulated) send JSON events to a Kafka broker every few seconds.
-2. PySpark consumes the stream and performs live aggregations.
-3. LSTM and CNN models train on the generated series for forecasting.
-4. An Airflow DAG refreshes data and a small Dash dashboard visualizes the results.
+- Multiple temperature sensors are deployed in each U.S state
+- Each sensor regularly sends temperature data to a Kafka server in AWS Cloud (Simulated by feeding 10,000 JSON data by using kafka-console-producer)
+- Kafka client retrieves the streaming data every 3 seconds
+- PySpark processes and analizes them in real-time by using Spark Streming, and show the results
+- The upgraded version also provides a Kafka-based simulation pipeline with schema validation and checksum verification.
+- LSTM and CNN models are trained on the generated time-series data with an ARIMA baseline for comparison.
+- Airflow automates data refresh tasks and a small Dash dashboard visualizes the sensor readings.
+=======
 
 ## Sensor Data Format
 
-`iotsimulator.py` emits JSON events matching the schema used in the streaming
-pipeline:
+`iotsimulator.py` generates events like:
 ```json
 {
-  "guid": "0-ZZZ123456-01A",
+  "guid": "0-ZZZ12345678-08K",
+  "destination": "0-AAA12345678",
   "state": "CA",
   "eventTime": "2016-11-16T13:26:39.447974Z",
-  "temperature": 59.7
+  "payload": {
+    "format": "urn:example:sensor:temp",
+    "data": {
+      "temperature": 59.7
+    }
+  }
 }
 ```
 
@@ -40,15 +49,20 @@ The application computes:
 - Number of sensors per state
 - Total number of sensors
 
-## Simulation Workflow
 
-- `sensor_pipeline.py` streams simulated messages to Kafka, validates them against a JSON schema and appends a checksum.
-- `train_models.py` trains LSTM and CNN models and reports an ARIMA baseline.
-- An Airflow DAG (`dags/data_refresh.py`) refreshes data hourly.
-- `dashboard.py` renders an interactive Plotly Dash chart from `sensor_data.csv`.
+## 4. Simulation workflow
+
+* `sensor_pipeline.py` streams simulated messages to Kafka with schema validation and checksums.
+* `services/producer_service.py` and `services/storage_service.py` form a small ingestion pipeline writing events to SQLite.
+* `services/analytics_service.py` exposes helper functions to compute hourly averages and per-state counts.
+* `train_models.py` trains LSTM and CNN models for forecasting and reports an ARIMA baseline.
+* An Airflow DAG (`dags/data_refresh.py`) refreshes data hourly.
+* `dashboard.py` loads data from `sensor_data.csv` and renders an interactive Plotly Dash chart.
+
 
 ## Future Plans
 
 - Deploy the pipeline on managed cloud services for scalability
 - Add more complex anomaly detection models
 - Incorporate real sensor hardware for data collection
+
